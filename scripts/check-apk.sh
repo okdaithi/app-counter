@@ -31,7 +31,10 @@ done
 
 if [ "$signed" = "--signed" ]; then
   echo "== apksigner"
-  "$build_tools/apksigner" verify --print-certs "$apk" | grep -E "Signer #1 certificate (DN|SHA-256)"
+  # verify exits non-zero on any signature problem; the grep only trims the output
+  # (signer labels differ between build-tools versions, so it must not decide the result).
+  certs="$("$build_tools/apksigner" verify --print-certs "$apk")"
+  grep -E "certificate (DN|SHA-256 digest)" <<<"$certs" || echo "$certs"
 fi
 
 exit "$fail"
