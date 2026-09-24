@@ -3,6 +3,7 @@ package com.okdaithi.daycounter.widget
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -103,6 +104,7 @@ class ConfigureActivity : ComponentActivity() {
         lifecycleScope.launch {
             CounterRepository(this@ConfigureActivity).bind(appWidgetId, counter.id)
             WidgetUpdater.updateAll(this@ConfigureActivity)
+            Toast.makeText(applicationContext, "Widget added", Toast.LENGTH_SHORT).show()
             setResult(RESULT_OK, resultIntent())
             finish()
         }

@@ -1,0 +1,106 @@
+name: Release
+
+# Builds a signed APK and publishes it as a GitHub Release.
+# Run it from the Actions tab ("Run workflow"), or push a tag such as v0.1.0.
+# The APK is always attached as DayCounter.apk, so this link stays stable:
+#   https://github.com/okdaithi/app-counter/releases/latest/download/DayCounter.apk
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version name, e.g. 0.1.0 (tag v<version> is created)"
+        required: true
+        default: "0.1.0"
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then v="${GITHUB_REF_NAME#v}"; else v="${{ inputs.version }}"; fi
+          v="${v#v}"
+          echo "name=$v" >> "$GITHUB_OUTPUT"
+          echo "tag=v$v" >> "$GITHUB_OUTPUT"
+
+      - name: Check signing secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.DAYCOUNTER_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.DAYCOUNTER_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.DAYCOUNTER_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.DAYCOUNTER_KEY_PASSWORD }}
+        run: |
+          missing=""
+          [ -n "$KEYSTORE_BASE64" ] || missing="$missing DAYCOUNTER_KEYSTORE_BASE64"
+          [ -n "$KEYSTORE_PASSWORD" ] || missing="$missing DAYCOUNTER_KEYSTORE_PASSWORD"
+          [ -n "$KEY_ALIAS" ] || missing="$missing DAYCOUNTER_KEY_ALIAS"
+          [ -n "$KEY_PASSWORD" ] || missing="$missing DAYCOUNTER_KEY_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. See INSTALL.md, 'Maintainer: one-time signing setup'."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      - name: Test and build signed release APK
+        env:
+          DAYCOUNTER_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          DAYCOUNTER_KEYSTORE_PASSWORD: ${{ secrets.DAYCOUNTER_KEYSTORE_PASSWORD }}
+          DAYCOUNTER_KEY_ALIAS: ${{ secrets.DAYCOUNTER_KEY_ALIAS }}
+          DAYCOUNTER_KEY_PASSWORD: ${{ secrets.DAYCOUNTER_KEY_PASSWORD }}
+          DAYCOUNTER_VERSION_NAME: ${{ steps.version.outputs.name }}
+          # Monotonic across releases, so each release installs as an update.
+          DAYCOUNTER_VERSION_CODE: ${{ github.run_number }}
+        run: ./gradlew :core:test :app:assembleRelease
+
+      - name: Verify APK
+        run: |
+          apk=app/build/outputs/apk/release/app-release.apk
+          scripts/check-apk.sh "$apk" --signed
+          mkdir -p dist
+          cp "$apk" dist/DayCounter.apk
+          cp "$apk" "dist/DayCounter-${{ steps.version.outputs.name }}.apk"
+          (cd dist && sha256sum DayCounter.apk > DayCounter.apk.sha256)
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          cat > notes.md <<NOTES
+          Day Counter ${VERSION}
+
+          Install on Android 8.0 or later (tested target: Samsung Galaxy A36 5G, Android 15):
+          1. On the phone, open https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/DayCounter.apk
+          2. Allow your browser to install unknown apps when asked, then tap Install.
+          3. Long-press the home screen, tap Widgets, find Counter and drag it onto the home screen.
+
+          Full guide: https://github.com/${GITHUB_REPOSITORY}/blob/main/INSTALL.md
+
+          SHA-256: $(cut -d' ' -f1 dist/DayCounter.apk.sha256)
+          NOTES
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --title "Day Counter $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
+          fi
