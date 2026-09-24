@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="styles.css"></helmet>
+<sc-if value="{{ w.isA }}" hint-placeholder-val="{{ true }}">
+<div style="width:68px;height:68px;border-radius:22px;background:var(--color-surface);box-shadow:0 0 0 1px var(--color-neutral-800), 0 4px 12px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading)">
+<div style="display:flex;align-items:baseline;gap:1px;color:{{ w.aColor }};font-size:{{ w.fs }};font-weight:500;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums"><span>{{ w.num }}</span><span style="font-size:11px;letter-spacing:0;opacity:.7">{{ w.suffix }}</span></div>
+</div>
+</sc-if>
+<sc-if value="{{ w.isB }}" hint-placeholder-val="{{ false }}">
+<div style="width:68px;height:68px;border-radius:50%;background:var(--color-neutral-900);border:{{ w.ring }};box-shadow:{{ w.glow }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading)">
+<div style="display:flex;align-items:baseline;gap:1px;color:var(--color-text);font-size:{{ w.fs }};font-weight:500;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums"><span>{{ w.num }}</span><span style="font-size:11px;letter-spacing:0;opacity:.7">{{ w.suffix }}</span></div>
+</div>
+</sc-if>
+<sc-if value="{{ w.isC }}" hint-placeholder-val="{{ false }}">
+<div style="width:68px;height:68px;border-radius:22px;background:color-mix(in srgb, var(--color-surface) 70%, transparent);backdrop-filter:blur(10px);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading)">
+<div style="display:flex;align-items:flex-start;gap:1px;color:var(--color-text);font-size:{{ w.fs }};font-weight:500;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums"><span style="font-size:13px;line-height:1;color:var(--color-accent-400);margin-top:1px">{{ w.sign }}</span><span>{{ w.num }}</span><span style="font-size:11px;letter-spacing:0;opacity:.7;align-self:flex-end">{{ w.suffix }}</span></div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:68,&quot;height&quot;:68},&quot;w&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}"></script>
+</body>
+</html>
