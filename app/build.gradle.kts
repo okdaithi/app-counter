@@ -5,6 +5,12 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Release signing and versioning come from the environment (GitHub Actions secrets in release.yml).
+// Without them, assembleRelease still builds, but the APK is unsigned.
+val releaseKeystore = providers.environmentVariable("DAYCOUNTER_KEYSTORE_PATH").orNull
+val ciVersionCode = providers.environmentVariable("DAYCOUNTER_VERSION_CODE").orNull?.toIntOrNull()
+val ciVersionName = providers.environmentVariable("DAYCOUNTER_VERSION_NAME").orNull
+
 android {
     namespace = "com.okdaithi.daycounter"
     compileSdk = 35
@@ -13,13 +19,26 @@ android {
         applicationId = "com.okdaithi.daycounter"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = ciVersionCode ?: 1
+        versionName = ciVersionName ?: "0.1.0"
+    }
+
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = providers.environmentVariable("DAYCOUNTER_KEYSTORE_PASSWORD").get()
+                keyAlias = providers.environmentVariable("DAYCOUNTER_KEY_ALIAS").get()
+                keyPassword = providers.environmentVariable("DAYCOUNTER_KEY_PASSWORD").get()
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.findByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
