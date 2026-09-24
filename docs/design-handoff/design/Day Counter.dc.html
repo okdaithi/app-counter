@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="styles.css"><script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script><style>body{margin:0;background:#10111b}a{color:var(--color-accent)}a:hover{color:var(--color-accent-300)}.dv-turn{padding:40px 44px 32px;scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:var(--color-accent-800);color:var(--color-accent-100);border-radius:4px;text-decoration:none}.dv-tname{font:500 14px/1.2 var(--font-heading);color:var(--color-text)}.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:var(--color-neutral-800);color:var(--color-neutral-100);border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 var(--font-body);color:var(--color-neutral-400)}.dv-card{max-width:100%;background:var(--color-bg);border-radius:8px;box-shadow:var(--shadow-sm);overflow:hidden}.dv-opt:target .dv-oid{background:var(--color-accent);color:var(--color-bg)}.dv-next{margin:22px 0 0;font:12px/1.5 var(--font-body);color:var(--color-neutral-500)}input[type=date]{color-scheme:dark}</style></helmet>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">1×1 day counter · Android · Nocturne</span></div>
+<p style="margin:0 0 24px;max-width:640px;font-size:13px;line-height:1.55;color:var(--color-neutral-400);text-wrap:pretty">The widget shows the number only. Each style marks the difference between "until" and "since" differently, since there is no label. Counters are set up in the app; you pick one when placing the widget. Future dates flip to counting "since" once they pass. Yearly counters count to the next occurrence. Numbers over 999 are shortened (1.2k). Your GitHub repo was empty, so everything here is built from scratch on Nocturne.</p>
+<div class="dv-opts">
+<sc-for list="{{ showcase }}" as="s" hint-placeholder-count="3">
+<div class="dv-opt" id="{{ s.id }}">
+<div class="dv-olabel"><a class="dv-oid" href="{{ s.href }}">{{ s.id }}</a>{{ s.name }}</div>
+<div class="dv-card" style="width:372px">
+<div style="padding:28px 24px 22px;background:radial-gradient(120% 90% at 15% 0%, var(--color-section-glow) 0%, transparent 60%), linear-gradient(180deg, #1d2036, var(--color-bg));display:flex;flex-direction:column;gap:26px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<sc-for list="{{ s.big }}" as="b" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+<div style="zoom:2"><dc-import name="Widget" w="{{ b }}" hint-size="68px,68px"></dc-import></div>
+<div style="font-size:11px;color:var(--color-neutral-300);text-align:center">{{ b.caption }}</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:center;gap:12px">
+<sc-for list="{{ s.row }}" as="r" hint-placeholder-count="4"><dc-import name="Widget" w="{{ r }}" hint-size="68px,68px"></dc-import></sc-for>
+</div>
+</div>
+<p style="margin:0;padding:14px 18px 16px;font-size:12.5px;line-height:1.5;color:var(--color-neutral-300);text-wrap:pretty">{{ s.desc }}</p>
+</div>
+</div>
+</sc-for>
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Prototype. Tap a widget to open its counter, long-press an empty spot to add one. Style: {{ styleName }} (see Tweaks)</div>
+<div style="width:380px;height:800px;border-radius:46px;background:#0b0c12;padding:10px;box-sizing:border-box;box-shadow:0 0 0 1px var(--color-neutral-800), 0 24px 60px rgba(0,0,0,.5)">
+<div style="position:relative;width:360px;height:780px;border-radius:36px;overflow:hidden;background:radial-gradient(130% 70% at 10% 0%, var(--color-section-glow) 0%, transparent 60%), radial-gradient(90% 60% at 100% 100%, var(--color-section) 0%, transparent 70%), linear-gradient(180deg, #1d2036, var(--color-bg));font-family:var(--font-body);color:var(--color-text);user-select:none;-webkit-user-select:none">
+<div style="position:absolute;top:0;left:0;right:0;height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:13px;font-weight:500;z-index:30;pointer-events:none">
+<span>{{ clock }}</span>
+<div style="position:absolute;left:50%;top:10px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#05060a"></div>
+<div style="display:flex;gap:6px;align-items:center;font-size:14px"><i class="ph ph-wifi-high"></i><i class="ph ph-cell-signal-full"></i><i class="ph ph-battery-high"></i></div>
+</div>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;padding-top:34px">
+<div style="padding:26px 24px 20px;font-family:var(--font-heading);font-size:22px;font-weight:500;letter-spacing:-0.01em">{{ glance }}</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:94px;padding:0 8px">
+<sc-for list="{{ cells }}" as="c" hint-placeholder-count="20">
+<div onPointerDown="{{ c.down }}" onPointerUp="{{ c.up }}" onPointerLeave="{{ c.up }}" onClick="{{ c.click }}" onContextMenu="{{ c.ctx }}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;touch-action:manipulation;transition:transform .12s" style-active="transform:scale(.94)">
+<sc-if value="{{ c.isWidget }}"><dc-import name="Widget" w="{{ c.w }}" hint-size="68px,68px"></dc-import></sc-if>
+<sc-if value="{{ c.isApp }}"><div style="width:52px;height:52px;border-radius:50%;background:{{ c.bg }};color:{{ c.fg }};display:grid;place-items:center;font-size:24px"><i class="{{ c.icon }}"></i></div><div style="font-size:11px;color:var(--color-neutral-200)">{{ c.name }}</div></sc-if>
+<sc-if value="{{ c.isTarget }}"><div style="width:68px;height:68px;border-radius:22px;border:1.5px dashed var(--color-accent);background:color-mix(in srgb, var(--color-accent) 10%, transparent);box-sizing:border-box"></div></sc-if>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);padding:14px 8px 34px">
+<sc-for list="{{ dock }}" as="d" hint-placeholder-count="4">
+<div style="display:flex;justify-content:center"><div style="width:52px;height:52px;border-radius:50%;background:var(--color-neutral-800);color:var(--color-neutral-200);display:grid;place-items:center;font-size:24px"><i class="{{ d.icon }}"></i></div></div>
+</sc-for>
+</div>
+</div>
+<div style="position:absolute;inset:0;background:var(--color-bg);z-index:10;transition:opacity .22s, transform .26s cubic-bezier(.2,.8,.2,1);opacity:{{ appOpacity }};transform:{{ appTransform }};pointer-events:{{ appPointer }};overflow:hidden">
+<div style="position:absolute;inset:0;padding-top:34px;display:flex;flex-direction:column">
+<div style="padding:22px 20px 16px;font-family:var(--font-heading);font-size:26px;font-weight:500;letter-spacing:-0.015em">Counters</div>
+<div style="flex:1;overflow-y:auto;padding:0 14px 110px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ listItems }}" as="it" hint-placeholder-count="4">
+<div onClick="{{ it.open }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer" style-hover="background:color-mix(in srgb, var(--color-surface) 85%, var(--color-accent))">
+<div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+<div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.title }}</div>
+<div style="font-size:12px;color:var(--color-neutral-400)">{{ it.sub }}</div>
+<sc-if value="{{ it.onHome }}"><span class="tag tag-neutral" style="align-self:flex-start;margin-top:4px;padding:1px 8px;font-size:10.5px">On home screen</span></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+<div style="font-family:var(--font-heading);font-size:28px;font-weight:500;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;color:{{ it.color }}">{{ it.big }}</div>
+<div style="font-size:11px;color:var(--color-neutral-400)">{{ it.unit }}</div>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 6px;font-size:14px;color:var(--color-neutral-400)">No counters yet. Tap + to add one.</div></sc-if>
+</div>
+<button onClick="{{ newCounter }}" aria-label="New counter" style="position:absolute;right:18px;bottom:40px;width:56px;height:56px;border-radius:16px;border:1px solid var(--color-accent);background:color-mix(in srgb, var(--color-accent) 12%, var(--color-bg));color:var(--color-accent);font-size:24px;display:grid;place-items:center;cursor:pointer" style-hover="background:color-mix(in srgb, var(--color-accent) 22%, var(--color-bg))"><i class="ph ph-plus"></i></button>
+</div>
+<div style="position:absolute;inset:0;background:var(--color-bg);padding-top:34px;display:flex;flex-direction:column;transition:transform .28s cubic-bezier(.2,.8,.2,1);transform:{{ editTransform }}">
+<div style="display:flex;align-items:center;gap:6px;padding:10px 12px 10px 6px">
+<button class="btn btn-icon" onClick="{{ back }}" aria-label="Back" style="font-size:22px"><i class="ph ph-arrow-left"></i></button>
+<div style="font-family:var(--font-heading);font-size:18px;font-weight:500;flex:1">{{ editTitle }}</div>
+<button class="btn btn-primary" onClick="{{ save }}">Save</button>
+</div>
+<div style="flex:1;overflow-y:auto;padding:4px 18px 40px;display:flex;flex-direction:column;gap:18px">
+<div style="border-radius:14px;padding:22px 0 16px;background:radial-gradient(120% 90% at 15% 0%, var(--color-section-glow) 0%, transparent 60%), linear-gradient(180deg, #1d2036, var(--color-surface));display:flex;flex-direction:column;align-items:center;gap:14px">
+<div style="zoom:1.5"><dc-import name="Widget" w="{{ previewW }}" hint-size="68px,68px"></dc-import></div>
+<div style="font-size:12px;color:var(--color-neutral-300)">{{ previewLine }}</div>
+</div>
+<div class="field"><label>Title</label><input class="input" value="{{ draft.title }}" onChange="{{ onTitle }}" placeholder="e.g. Trip to Japan"><sc-if value="{{ hasErrTitle }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--color-accent-300);margin-top:5px">Add a title.</div></sc-if></div>
+<div class="field"><label>Date</label><input class="input" type="date" value="{{ draft.date }}" onChange="{{ onDate }}"><sc-if value="{{ hasErrDate }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--color-accent-300);margin-top:5px">Pick a date.</div></sc-if></div>
+<div class="field"><label>Count in</label>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+<sc-for list="{{ units }}" as="u" hint-placeholder-count="4"><button onClick="{{ u.pick }}" style="padding:9px 0;font:inherit;font-size:13px;background:transparent;border:0;cursor:pointer;color:{{ u.color }};box-shadow:{{ u.shadow }}">{{ u.label }}</button></sc-for>
+</div></div>
+<div style="display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ toggles }}" as="t" hint-placeholder-count="2">
+<div onClick="{{ t.flip }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;cursor:pointer">
+<div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="font-size:14px">{{ t.label }}</div><div style="font-size:12px;color:var(--color-neutral-400)">{{ t.help }}</div></div>
+<div style="position:relative;width:38px;height:22px;border-radius:11px;box-sizing:border-box;border:1px solid {{ t.border }};background:{{ t.track }};transition:background .15s"><div style="position:absolute;top:3px;left:{{ t.knob }};width:14px;height:14px;border-radius:50%;background:{{ t.knobColor }};transition:left .15s"></div></div>
+</div>
+</sc-for>
+</div>
+<div class="field"><label>Notes</label><textarea class="input" value="{{ draft.notes }}" onChange="{{ onNotes }}" placeholder="Optional"></textarea></div>
+<sc-if value="{{ canDelete }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary" onClick="{{ del }}" style="align-self:flex-start"><i class="ph ph-trash"></i>Delete counter</button></sc-if>
+</div>
+</div>
+</div>
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:20;background:rgba(5,6,12,.55);transition:opacity .2s;opacity:{{ scrimOpacity }};pointer-events:{{ scrimPointer }}"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:21;background:var(--color-surface);border-radius:22px 22px 0 0;box-shadow:var(--shadow-md);padding:10px 16px 40px;transition:transform .26s cubic-bezier(.2,.8,.2,1);transform:{{ sheetTransform }}">
+<div style="width:32px;height:4px;border-radius:2px;background:var(--color-neutral-700);margin:0 auto 14px"></div>
+<sc-if value="{{ sheetWidgets }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:var(--font-heading);font-size:18px;font-weight:500;margin-bottom:12px">Widgets</div>
+<div onClick="{{ pickWidgetType }}" style="display:flex;align-items:center;gap:14px;padding:12px;border-radius:var(--radius-md);background:var(--color-bg);cursor:pointer" style-hover="box-shadow:inset 0 0 0 1px var(--color-accent)">
+<dc-import name="Widget" w="{{ sheetSample }}" hint-size="68px,68px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:3px"><div style="font-size:14px;font-weight:500">Counter</div><div style="font-size:12px;color:var(--color-neutral-400)">1×1 · Days since or until a date</div></div>
+<i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+</div>
+</sc-if>
+<sc-if value="{{ sheetPick }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:var(--font-heading);font-size:18px;font-weight:500;margin-bottom:10px">Choose a counter</div>
+<div style="display:flex;flex-direction:column;gap:4px;max-height:330px;overflow-y:auto">
+<sc-for list="{{ pickItems }}" as="p" hint-placeholder-count="4">
+<div onClick="{{ p.pick }}" style="display:flex;align-items:center;gap:12px;padding:8px;border-radius:var(--radius-md);cursor:pointer" style-hover="background:color-mix(in srgb, var(--color-text) 6%, transparent)">
+<div style="zoom:.7"><dc-import name="Widget" w="{{ p.w }}" hint-size="68px,68px"></dc-import></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><div style="font-size:14px">{{ p.title }}</div><div style="font-size:12px;color:var(--color-neutral-400)">{{ p.sub }}</div></div>
+</div>
+</sc-for>
+<sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 8px;font-size:13px;color:var(--color-neutral-400)">No counters yet. Create one in the Counter app first.</div></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ sheetMenu }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:var(--font-heading);font-size:18px;font-weight:500;margin-bottom:10px">{{ menuTitle }}</div>
+<div style="display:flex;flex-direction:column">
+<div onClick="{{ menuOpen }}" style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:var(--radius-md);cursor:pointer;font-size:14px" style-hover="background:color-mix(in srgb, var(--color-text) 6%, transparent)"><i class="ph ph-pencil-simple" style="font-size:18px"></i>Edit counter</div>
+<div onClick="{{ menuRemove }}" style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:var(--radius-md);cursor:pointer;font-size:14px" style-hover="background:color-mix(in srgb, var(--color-text) 6%, transparent)"><i class="ph ph-x" style="font-size:18px"></i>Remove from home screen</div>
+</div>
+</sc-if>
+</div>
+<div style="position:absolute;left:50%;bottom:56px;z-index:25;transform:translateX(-50%);padding:8px 14px;border-radius:18px;background:var(--color-neutral-800);font-size:12.5px;white-space:nowrap;transition:opacity .2s;opacity:{{ toastOpacity }};pointer-events:none">{{ toast }}</div>
+<div onClick="{{ goHome }}" title="Home" style="position:absolute;left:0;right:0;bottom:0;height:24px;z-index:26;display:flex;align-items:center;justify-content:center;cursor:pointer"><div style="width:110px;height:4px;border-radius:2px;background:var(--color-neutral-300)"></div></div>
+</div>
+</div>
+</div>
+</div>
+<p class="dv-next">Try next: "<a class="dv-oid" href="#1b">1b</a> but square" · "add a detail screen before editing" · "show a light-wallpaper version"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;widgetStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tile&quot;,&quot;Ring&quot;,&quot;Signed&quot;],&quot;default&quot;:&quot;Tile&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;abbreviate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const DAY = 864e5;
+const KEY = 'daycounter.v1';
+const APPS = {
+  clock: { name: 'Clock', icon: 'ph ph-clock' },
+  photos: { name: 'Photos', icon: 'ph ph-image' },
+  counter: { name: 'Counter', icon: 'ph ph-hourglass-medium', ours: true },
+  settings: { name: 'Settings', icon: 'ph ph-gear-six' },
+};
+const DOCK = ['ph ph-phone', 'ph ph-chat-circle', 'ph ph-camera', 'ph ph-globe'];
+const SEED = [
+  { id: 'c1', title: 'Moved to Lisbon', date: '2024-03-12', unit: 'days', includeToday: false, repeat: false, notes: '' },
+  { id: 'c2', title: 'Trip to Japan', date: '2026-11-18', unit: 'days', includeToday: false, repeat: false, notes: 'Flight leaves 07:40' },
+  { id: 'c3', title: "Mia's birthday", date: '2019-02-07', unit: 'days', includeToday: false, repeat: true, notes: '' },
+  { id: 'c4', title: 'Quit coffee', date: '2021-06-01', unit: 'weeks', includeToday: false, repeat: false, notes: '' },
+  { id: 'c5', title: 'Started at Halden', date: '2016-01-04', unit: 'days', includeToday: true, repeat: false, notes: '' },
+];
+function seedCells() {
+  const c = Array(20).fill(null);
+  c[0] = { widget: 'c2' }; c[1] = { widget: 'c1' }; c[2] = { widget: 'c5' }; c[3] = { widget: 'c3' };
+  c[16] = { app: 'clock' }; c[17] = { app: 'photos' }; c[18] = { app: 'counter' }; c[19] = { app: 'settings' };
+  return c;
+}
+const sod = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+const parse = s => { if (!s) return null; const [y, m, d] = s.split('-').map(Number); if (!y || !m || !d) return null; return new Date(y, m - 1, d); };
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const fmtDate = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+function calc(c) {
+  const today = sod(new Date());
+  let t = parse(c.date); if (!t) return null;
+  if (c.repeat) {
+    t = new Date(today.getFullYear(), t.getMonth(), t.getDate());
+    if (t < today) t = new Date(today.getFullYear() + 1, t.getMonth(), t.getDate());
+  }
+  const diff = Math.round((t - today) / DAY);
+  const future = diff > 0;
+  const days = Math.abs(diff) + (c.includeToday ? 1 : 0);
+  let n = days;
+  if (c.unit === 'weeks') n = Math.floor(days / 7);
+  if (c.unit === 'months' || c.unit === 'years') {
+    const a = future ? today : t, b = future ? t : today;
+    let m = (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth();
+    if (b.getDate() < a.getDate()) m--;
+    m = Math.max(0, m);
+    n = c.unit === 'years' ? Math.floor(m / 12) : m;
+  }
+  return { n, future, diff, target: t };
+}
+const SUFFIX = { days: '', weeks: 'w', months: 'mo', years: 'y' };
+const WORD = { days: ['day', 'days'], weeks: ['week', 'weeks'], months: ['month', 'months'], years: ['year', 'years'] };
+function short(n, abbr) {
+  if (!abbr || n < 1000) return n.toLocaleString('en-US');
+  if (n < 10000) return (Math.floor(n / 100) / 10) + 'k';
+  return Math.floor(n / 1000) + 'k';
+}
+function wv(c, style, abbr, caption) {
+  const r = calc(c) || { n: 0, future: true };
+  const num = short(r.n, abbr);
+  const suffix = SUFFIX[c.unit] || '';
+  const len = num.length + suffix.length * 0.6;
+  const fs = len <= 2 ? 30 : len <= 3 ? 27 : len <= 4 ? 22 : len <= 5 ? 18 : 15;
+  return {
+    num, suffix, fs: fs + 'px', caption,
+    isA: style === 'Tile', isB: style === 'Ring', isC: style === 'Signed',
+    aColor: r.future ? 'var(--color-accent-300)' : 'var(--color-text)',
+    ring: r.future ? '2px solid var(--color-accent)' : '2px solid var(--color-neutral-800)',
+    glow: r.future ? '0 0 16px color-mix(in srgb, var(--color-accent) 40%, transparent)' : 'none',
+    sign: r.future ? '−' : '+',
+  };
+}
+function sub(c) {
+  const r = calc(c); if (!r) return '';
+  if (c.repeat) return `Every ${r.target.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}`;
+  if (r.diff === 0) return `Today, ${fmtDate(r.target)}`;
+  return `${r.future ? 'Until' : 'Since'} ${fmtDate(r.target)}`;
+}
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    this.state = {
+      counters: saved?.counters || SEED, cells: saved?.cells || seedCells(),
+      screen: 'home', editId: null, draft: null, errors: {}, sheet: null, toast: '', toastOn: false,
+    };
+  }
+  componentDidUpdate(_, prev) {
+    if (prev.counters !== this.state.counters || prev.cells !== this.state.cells)
+      try { localStorage.setItem(KEY, JSON.stringify({ counters: this.state.counters, cells: this.state.cells })); } catch (e) {}
+  }
+  componentWillUnmount() { clearTimeout(this.lpT); clearTimeout(this.toastT); }
+  showToast(msg) {
+    clearTimeout(this.toastT);
+    this.setState({ toast: msg, toastOn: true });
+    this.toastT = setTimeout(() => this.setState({ toastOn: false }), 1800);
+  }
+  lpStart(fn) { this.lpFired = false; clearTimeout(this.lpT); this.lpT = setTimeout(() => { this.lpFired = true; fn(); }, 450); }
+  lpEnd() { clearTimeout(this.lpT); }
+  openEditor(id) {
+    const c = this.state.counters.find(x => x.id === id);
+    const draft = c ? { ...c } : { title: '', date: iso(new Date()), unit: 'days', includeToday: false, repeat: false, notes: '' };
+    this.setState({ screen: 'edit', editId: c ? id : null, draft, errors: {}, sheet: null });
+  }
+  setDraft(patch) { this.setState(s => ({ draft: { ...s.draft, ...patch }, errors: {} })); }
+  save() {
+    const d = this.state.draft;
+    const errors = { title: !d.title.trim(), date: !parse(d.date) };
+    if (errors.title || errors.date) return this.setState({ errors });
+    this.setState(s => {
+      const counters = s.editId
+        ? s.counters.map(c => c.id === s.editId ? { ...d, title: d.title.trim(), id: s.editId } : c)
+        : [...s.counters, { ...d, title: d.title.trim(), id: 'c' + Date.now() }];
+      return { counters, screen: 'list' };
+    });
+    this.showToast('Saved');
+  }
+  del() {
+    const id = this.state.editId;
+    this.setState(s => ({
+      counters: s.counters.filter(c => c.id !== id),
+      cells: s.cells.map(c => c && c.widget === id ? null : c),
+      screen: 'list',
+    }));
+    this.showToast('Counter deleted');
+  }
+  renderVals() {
+    const style = this.props.widgetStyle ?? 'Tile';
+    const abbr = this.props.abbreviate ?? true;
+    const { counters, cells, screen, draft, errors, sheet } = this.state;
+    const byId = id => counters.find(c => c.id === id);
+    const now = new Date();
+    const japan = SEED[1], halden = SEED[4];
+    const rowSet = [SEED[1], SEED[0], SEED[3], SEED[2]];
+    const descs = {
+      Tile: 'Rounded tile. Future dates print in the accent tint, past dates in plain text. The quietest option.',
+      Ring: 'Circle. A glowing accent ring marks a date still to come; a dim ring marks one that has passed.',
+      Signed: 'Frosted tile with a small sign: − counts down to a date, + counts up from it. Readable without color.',
+    };
+    const showcase = [['1a', 'Tile'], ['1b', 'Ring'], ['1c', 'Signed']].map(([id, k]) => ({
+      id, href: '#' + id, name: k, desc: descs[k],
+      big: [wv(japan, k, abbr, 'Until · Trip to Japan'), wv(halden, k, abbr, 'Since · Started at Halden')],
+      row: rowSet.map(c => wv(c, k, abbr)),
+    }));
+    const placing = sheet && sheet.kind === 'add' ? sheet.cell : -1;
+    const cellViews = cells.map((cell, i) => {
+      const w = cell && cell.widget && byId(cell.widget);
+      const app = cell && cell.app && APPS[cell.app];
+      const onLong = () => {
+        if (w) this.setState({ sheet: { kind: 'menu', cell: i } });
+        else if (!app) this.setState({ sheet: { kind: 'add', cell: i, step: 'widgets' } });
+      };
+      return {
+        isWidget: !!w, isApp: !!app, isTarget: i === placing && !w && !app,
+        w: w ? wv(w, style, abbr) : null,
+        name: app?.name, icon: app?.icon,
+        bg: app?.ours ? 'var(--color-accent-800)' : 'var(--color-neutral-800)',
+        fg: app?.ours ? 'var(--color-accent-200)' : 'var(--color-neutral-200)',
+        down: () => this.lpStart(onLong), up: () => this.lpEnd(),
+        ctx: e => { e.preventDefault(); this.lpEnd(); onLong(); },
+        click: () => {
+          if (this.lpFired) { this.lpFired = false; return; }
+          if (w) this.openEditor(w.id);
+          else if (app?.ours) this.setState({ screen: 'list' });
+          else if (!app) this.showToast('Long-press to add a widget');
+        },
+      };
+    });
+    const onHome = new Set(cells.filter(c => c && c.widget).map(c => c.widget));
+    const listItems = counters.map(c => {
+      const r = calc(c) || { n: 0, future: true };
+      const wd = WORD[c.unit][r.n === 1 ? 0 : 1];
+      return {
+        title: c.title, sub: sub(c), big: r.n.toLocaleString('en-US'),
+        unit: r.diff === 0 && !c.includeToday ? 'today' : `${wd} ${r.future ? 'until' : 'since'}`,
+        color: r.future ? 'var(--color-accent-300)' : 'var(--color-text)',
+        onHome: onHome.has(c.id), open: () => this.openEditor(c.id),
+      };
+    });
+    const d = draft || SEED[0];
+    const pr = calc(d);
+    const previewLine = pr
+      ? (pr.diff === 0 && !d.includeToday ? 'Today' : `${pr.n.toLocaleString('en-US')} ${WORD[d.unit][pr.n === 1 ? 0 : 1]} ${pr.future ? 'until' : 'since'} ${fmtDate(pr.target)}`)
+      : 'Pick a date';
+    const tog = (key, label, help) => ({
+      label, help, flip: () => this.setDraft({ [key]: !d[key] }),
+      border: d[key] ? 'var(--color-accent)' : 'var(--color-divider)',
+      track: d[key] ? 'var(--color-accent-800)' : 'transparent',
+      knob: d[key] ? '19px' : '3px',
+      knobColor: d[key] ? 'var(--color-accent)' : 'var(--color-neutral-500)',
+    });
+    const hide = 'translateY(100%)';
+    return {
+      showcase, styleName: style,
+      clock: `${now.getHours()}:${pad(now.getMinutes())}`,
+      glance: now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
+      cells: cellViews, dock: DOCK.map(icon => ({ icon })),
+      appOpacity: screen === 'home' ? 0 : 1,
+      appTransform: screen === 'home' ? 'scale(.94)' : 'none',
+      appPointer: screen === 'home' ? 'none' : 'auto',
+      editTransform: screen === 'edit' ? 'translateX(0)' : 'translateX(100%)',
+      listItems, listEmpty: counters.length === 0,
+      newCounter: () => this.openEditor(null),
+      editTitle: this.state.editId ? 'Edit counter' : 'New counter',
+      back: () => this.setState({ screen: 'list' }),
+      save: () => this.save(), del: () => this.del(), canDelete: !!this.state.editId,
+      draft: d, previewW: wv(d, style, abbr), previewLine,
+      onTitle: e => this.setDraft({ title: e.target.value }),
+      onDate: e => this.setDraft({ date: e.target.value }),
+      onNotes: e => this.setDraft({ notes: e.target.value }),
+      hasErrTitle: !!errors.title, hasErrDate: !!errors.date,
+      units: ['days', 'weeks', 'months', 'years'].map(u => ({
+        label: u[0].toUpperCase() + u.slice(1), pick: () => this.setDraft({ unit: u }),
+        color: d.unit === u ? 'var(--color-accent)' : 'var(--color-text)',
+        shadow: d.unit === u ? 'inset 0 0 0 1px var(--color-accent)' : 'none',
+      })),
+      toggles: [
+        tog('includeToday', 'Include today', 'Adds one day to the count'),
+        tog('repeat', 'Repeat yearly', 'Counts to the next anniversary'),
+      ],
+      goHome: () => this.setState({ screen: 'home', sheet: null }),
+      closeSheet: () => this.setState({ sheet: null }),
+      scrimOpacity: sheet ? 1 : 0, scrimPointer: sheet ? 'auto' : 'none',
+      sheetTransform: sheet ? 'translateY(0)' : hide,
+      sheetWidgets: !!sheet && sheet.kind === 'add' && sheet.step === 'widgets',
+      sheetPick: !!sheet && sheet.kind === 'add' && sheet.step === 'pick',
+      sheetMenu: !!sheet && sheet.kind === 'menu',
+      sheetSample: wv(SEED[1], style, abbr),
+      pickWidgetType: () => this.setState(s => ({ sheet: { ...s.sheet, step: 'pick' } })),
+      pickItems: counters.map(c => ({
+        title: c.title, sub: sub(c), w: wv(c, style, abbr),
+        pick: () => {
+          const i = this.state.sheet.cell;
+          this.setState(s => ({ cells: s.cells.map((x, j) => j === i ? { widget: c.id } : x), sheet: null }));
+          this.showToast('Widget added');
+        },
+      })),
+      menuTitle: sheet && sheet.kind === 'menu' ? byId(cells[sheet.cell]?.widget)?.title : '',
+      menuOpen: () => { const id = cells[sheet.cell].widget; this.openEditor(id); },
+      menuRemove: () => {
+        const i = sheet.cell;
+        this.setState(s => ({ cells: s.cells.map((x, j) => j === i ? null : x), sheet: null }));
+        this.showToast('Widget removed');
+      },
+      toast: this.state.toast, toastOpacity: this.state.toastOn ? 1 : 0,
+    };
+  }
+}
+</script>
+</body>
+</html>
