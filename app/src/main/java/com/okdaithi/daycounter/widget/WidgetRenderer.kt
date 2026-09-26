@@ -25,6 +25,7 @@ class WidgetRenderer(context: Context) {
     private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val numberPaint = textPaint(letterSpacing = -0.04f)
     private val smallPaint = textPaint(letterSpacing = 0f)
+    private val titlePaint = textPaint(letterSpacing = 0.01f)
     private val rect = RectF()
 
     private fun textPaint(letterSpacing: Float) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -99,6 +100,9 @@ class WidgetRenderer(context: Context) {
     }
 
     private fun drawNumber(canvas: Canvas, face: WidgetFace, style: WidgetStyle, u: Float) {
+        val hasTitle = face.title.isNotEmpty() && !face.empty
+        val titleOffset = if (hasTitle) TITLE_SIZE * u * 0.55f else 0f
+
         val fs = CounterFormat.widgetFontSizeSp(face.number, face.suffix) * u
         val gap = u
         val numberColor = when {
@@ -106,6 +110,8 @@ class WidgetRenderer(context: Context) {
             style == WidgetStyle.TILE && face.future -> ACCENT_300
             else -> TEXT
         }
+
+        if (hasTitle) drawTitle(canvas, face.title, u)
 
         numberPaint.textSize = fs
         numberPaint.color = numberColor
@@ -122,14 +128,12 @@ class WidgetRenderer(context: Context) {
             (if (face.suffix.isEmpty()) 0f else gap + suffixWidth)
         var x = rect.centerX() - total / 2
 
-        // Line box of the number (line-height 1), centred vertically.
-        val lineTop = rect.centerY() - fs / 2
+        val lineTop = rect.centerY() - fs / 2 + titleOffset
         val numberBaseline = baselineFor(numberPaint, lineTop, fs)
 
         if (sign.isNotEmpty()) {
             smallPaint.textSize = SIGN_SIZE * u
             smallPaint.color = ACCENT_400
-            // Top-aligned with a 1-unit offset.
             canvas.drawText(sign, x, baselineFor(smallPaint, lineTop + u, SIGN_SIZE * u), smallPaint)
             x += signWidth + gap
         }
@@ -139,15 +143,34 @@ class WidgetRenderer(context: Context) {
 
         if (face.suffix.isNotEmpty()) {
             smallPaint.textSize = SUFFIX_SIZE * u
-            smallPaint.color = (numberColor and 0x00FFFFFF) or (0xB3 shl 24) // 70% opacity
+            smallPaint.color = (numberColor and 0x00FFFFFF) or (0xB3 shl 24)
             val suffixBaseline = if (style == WidgetStyle.SIGNED) {
-                // Bottom-aligned with the number's line box.
                 baselineFor(smallPaint, lineTop + fs - SUFFIX_SIZE * u, SUFFIX_SIZE * u)
             } else {
                 numberBaseline
             }
             canvas.drawText(face.suffix, x + gap, suffixBaseline, smallPaint)
         }
+    }
+
+    private fun drawTitle(canvas: Canvas, title: String, u: Float) {
+        titlePaint.textSize = TITLE_SIZE * u
+        titlePaint.color = NEUTRAL_400
+
+        val maxWidth = rect.width() - 8 * u
+        var text = title
+        var w = titlePaint.measureText(text)
+        if (w > maxWidth && text.length > 2) {
+            while (titlePaint.measureText(text + "…") > maxWidth && text.length > 1) {
+                text = text.dropLast(1).trimEnd()
+            }
+            text += "…"
+            w = titlePaint.measureText(text)
+        }
+
+        val x = rect.centerX() - w / 2
+        val y = rect.top + 4 * u + TITLE_SIZE * u
+        canvas.drawText(text, x, baselineFor(titlePaint, rect.top + 3.5f * u, TITLE_SIZE * u), titlePaint)
     }
 
     /** Baseline for text set with line-height equal to [size], given its line box [top]. */
@@ -163,6 +186,7 @@ class WidgetRenderer(context: Context) {
         const val SHAPE = 68f
         const val CANVAS = 84f
 
+        private const val TITLE_SIZE = 8f
         private const val SUFFIX_SIZE = 11f
         private const val SIGN_SIZE = 13f
 
@@ -173,6 +197,7 @@ class WidgetRenderer(context: Context) {
         private const val ACCENT_40 = 0x669184D9
         private const val ACCENT_300 = 0xFFD2CEFD.toInt()
         private const val ACCENT_400 = 0xFFB5ABFC.toInt()
+        private const val NEUTRAL_400 = 0xFFB2B6CA.toInt()
         private const val NEUTRAL_500 = 0xFF9397AB.toInt()
         private const val NEUTRAL_800 = 0xFF3F424D.toInt()
         private const val NEUTRAL_900 = 0xFF292B31.toInt()

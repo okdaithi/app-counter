@@ -38,12 +38,16 @@ import androidx.compose.ui.unit.sp
 import com.okdaithi.daycounter.R
 import com.okdaithi.daycounter.ui.theme.Inter
 import com.okdaithi.daycounter.ui.theme.Nocturne
+import com.okdaithi.daycounter.update.UpdateInfo
 
 @Composable
 fun CounterListScreen(
     rows: List<CounterRowUi>?,
+    update: UpdateInfo?,
     onOpen: (String) -> Unit,
     onNew: () -> Unit,
+    onUpdate: (String) -> Unit,
+    onDismissUpdate: () -> Unit,
 ) {
     Box(
         Modifier
@@ -60,6 +64,9 @@ fun CounterListScreen(
                 letterSpacing = (-0.015).em,
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 22.dp, bottom = 16.dp),
             )
+            if (update != null) {
+                UpdateBanner(update, onUpdate = { onUpdate(update.downloadUrl) }, onDismiss = onDismissUpdate)
+            }
             if (rows != null && rows.isEmpty()) {
                 Text(
                     "No counters yet. Tap + to add one.",
@@ -158,5 +165,57 @@ private fun Fab(onClick: () -> Unit, modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         Icon(painterResource(R.drawable.ic_plus), "New counter", tint = Nocturne.Accent, modifier = Modifier.size(24.dp))
+    }
+}
+
+@Composable
+private fun UpdateBanner(info: UpdateInfo, onUpdate: () -> Unit, onDismiss: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Nocturne.Accent.copy(alpha = 0.12f))
+            .border(1.dp, Nocturne.Accent.copy(alpha = 0.3f), RoundedCornerShape(10.dp))
+            .clickable(onClick = onUpdate)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                "Update available",
+                color = Nocturne.Text,
+                fontFamily = Inter,
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp,
+            )
+            Text(
+                "v${info.latestVersion}",
+                color = Nocturne.Neutral400,
+                fontFamily = Inter,
+                fontSize = 12.sp,
+            )
+        }
+        Text(
+            "Update",
+            color = Nocturne.Accent,
+            fontFamily = Inter,
+            fontWeight = FontWeight.Medium,
+            fontSize = 13.sp,
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .background(Nocturne.Accent.copy(alpha = 0.15f))
+                .clickable(onClick = onUpdate)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+        )
+        Icon(
+            painterResource(R.drawable.ic_close),
+            "Dismiss",
+            tint = Nocturne.Neutral500,
+            modifier = Modifier
+                .size(18.dp)
+                .clickable(onClick = onDismiss),
+        )
     }
 }

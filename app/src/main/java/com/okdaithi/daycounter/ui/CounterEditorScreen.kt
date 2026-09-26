@@ -168,8 +168,8 @@ private fun PreviewCard(draft: Draft) {
     val today = LocalDate.now()
     val result = draft.date?.let { CounterMath.calc(it, draft.unit, draft.includeToday, draft.repeatYearly, today) }
     val face = result?.let {
-        WidgetFace(CounterFormat.widgetNumber(it.n), CounterFormat.widgetSuffix(draft.unit), it.future)
-    } ?: WidgetFace("0", CounterFormat.widgetSuffix(draft.unit), future = true)
+        WidgetFace(draft.title, CounterFormat.widgetNumber(it.n), CounterFormat.widgetSuffix(draft.unit), it.future)
+    } ?: WidgetFace(draft.title, "0", CounterFormat.widgetSuffix(draft.unit), future = true)
 
     Column(
         Modifier
