@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -86,6 +87,7 @@ private fun NavHostController.openEditor(id: String?) =
 private fun DayCounterNav(appViewModel: AppViewModel, startCounterId: String?) {
     val nav = rememberNavController()
     val toast by appViewModel.toast.collectAsStateWithLifecycle()
+    val update by appViewModel.update.collectAsStateWithLifecycle()
 
     LaunchedEffect(startCounterId) {
         if (startCounterId != null) nav.openEditor(startCounterId)
@@ -105,8 +107,17 @@ private fun DayCounterNav(appViewModel: AppViewModel, startCounterId: String?) {
                 val rows by appViewModel.rows.collectAsStateWithLifecycle()
                 CounterListScreen(
                     rows = rows,
+                    update = update,
                     onOpen = { nav.openEditor(it) },
                     onNew = { nav.openEditor(null) },
+                    onUpdate = { url ->
+                        try {
+                            nav.context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                        } catch (_: Exception) {
+                            Toast.makeText(nav.context, "Could not open browser", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onDismissUpdate = { appViewModel.dismissUpdate() },
                 )
             }
             composable(

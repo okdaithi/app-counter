@@ -8,6 +8,8 @@ import com.okdaithi.daycounter.core.CounterFormat
 import com.okdaithi.daycounter.core.CounterMath
 import com.okdaithi.daycounter.data.CounterRepository
 import com.okdaithi.daycounter.widget.WidgetFace
+import com.okdaithi.daycounter.update.UpdateChecker
+import com.okdaithi.daycounter.update.UpdateInfo
 import com.okdaithi.daycounter.widget.WidgetUpdater
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -60,8 +62,20 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     val toast: StateFlow<ToastUi> = _toast.asStateFlow()
     private var toastJob: Job? = null
 
+    private val _update = MutableStateFlow<UpdateInfo?>(null)
+    val update: StateFlow<UpdateInfo?> = _update.asStateFlow()
+
     init {
         viewModelScope.launch { WidgetUpdater.pruneBindings(app) }
+        viewModelScope.launch {
+            _update.value = UpdateChecker.check(app)
+        }
+    }
+
+    fun dismissUpdate() {
+        val info = _update.value ?: return
+        UpdateChecker.dismiss(getApplication(), info.latestVersion)
+        _update.value = null
     }
 
     fun showToast(message: String) {

@@ -47,9 +47,11 @@ The number updates just after midnight. Samsung's battery management can put rar
 
 ## Updating
 
-Download and install the APK again from the same link. It installs over the old version and keeps your counters.
+The app checks for updates once a day when you open it. If a newer version is available, a banner appears at the top of the counter list. Tap **Update** to download the new APK in Chrome, then install it the same way as step 2. It installs over the old version and keeps your counters.
 
-To get updates automatically, install [Obtainium](https://github.com/ImranR98/Obtainium) and add `https://github.com/okdaithi/app-counter` as an app source.
+You can also download and install the APK again manually from the same link at any time.
+
+For fully automatic updates, install [Obtainium](https://github.com/ImranR98/Obtainium) and add `https://github.com/okdaithi/app-counter` as an app source.
 
 ## Uninstalling
 
